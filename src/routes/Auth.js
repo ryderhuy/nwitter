@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { Form, Input, Button } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import "antd/dist/antd.css";
+import "../index.css";
 import { authService, firebaseInstance } from "fbase";
 
 const Auth = () => {
@@ -17,7 +21,7 @@ const Auth = () => {
     }
   };
   const onSubmit = async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     try {
       let data;
       if (isNewAccount) {
@@ -48,39 +52,87 @@ const Auth = () => {
     console.log(data);
   };
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
+    <div className="login-form">
+      <Form onFinish={onSubmit}>
+        <Form.Item
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Username!",
+            },
+          ]}
+        >
+          <Input
+            name="email"
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Email"
+            value={email}
+            onChange={onChange}
+          />
+        </Form.Item>
+        {/* <Input
           name="email"
           type="text"
           placeholder="email"
           required
           value={email}
           onChange={onChange}
-        />
-        <input
+        /> */}
+        <Form.Item
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Password!",
+            },
+          ]}
+        >
+          <Input
+            name="password"
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password"
+            value={passWord}
+            onChange={onChange}
+          />
+        </Form.Item>
+        {/* <Input
           name="password"
           type="password"
           placeholder="password"
           required
           value={passWord}
           onChange={onChange}
-        />
-        <input
+        /> */}
+        {/* <Input
           type="submit"
           value={isNewAccount === false ? "Create new account" : "Log In"}
-        />
-        {error}
-      </form>
-      <span onClick={toggleAccount}>
-        {isNewAccount ? "Sign In" : "Create Account"}
-      </span>
-      <button name="google" onClick={onSocialClick}>
-        Continue with Google
-      </button>
-      <button name="github" onClick={onSocialClick}>
-        Continue with Github
-      </button>
+        /> */}
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            {isNewAccount === false ? "Create new account" : "Log In"}
+          </Button>
+        </Form.Item>
+      </Form>
+
+      <span className="text-error">{error}</span>
+      <span>Or login with</span>
+      <div className="login-social">
+        <Button name="google" onClick={onSocialClick}>
+          Continue with Google
+        </Button>
+        <Button name="github" onClick={onSocialClick}>
+          Continue with Github
+        </Button>
+        <span onClick={toggleAccount}>
+          {isNewAccount ? "Sign In" : "Create new account"}
+        </span>
+      </div>
     </div>
   );
 };
