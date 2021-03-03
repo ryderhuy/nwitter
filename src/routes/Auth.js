@@ -38,10 +38,7 @@ const Auth = () => {
     }
   };
   const toggleAccount = () => setNewAccount((prev) => !prev);
-  const onSocialClick = async (event) => {
-    const {
-      target: { name },
-    } = event;
+  const onSocialClick = async (name) => {
     let provider;
     if (name === "google") {
       provider = new firebaseInstance.auth.GoogleAuthProvider();
@@ -71,14 +68,6 @@ const Auth = () => {
             onChange={onChange}
           />
         </Form.Item>
-        {/* <Input
-          name="email"
-          type="text"
-          placeholder="email"
-          required
-          value={email}
-          onChange={onChange}
-        /> */}
         <Form.Item
           name="password"
           rules={[
@@ -97,18 +86,6 @@ const Auth = () => {
             onChange={onChange}
           />
         </Form.Item>
-        {/* <Input
-          name="password"
-          type="password"
-          placeholder="password"
-          required
-          value={passWord}
-          onChange={onChange}
-        /> */}
-        {/* <Input
-          type="submit"
-          value={isNewAccount === false ? "Create new account" : "Log In"}
-        /> */}
         <Form.Item>
           <Button
             type="primary"
@@ -123,10 +100,10 @@ const Auth = () => {
       <span className="text-error">{error}</span>
       <span>Or login with</span>
       <div className="login-social">
-        <Button name="google" onClick={onSocialClick}>
+        <Button name="google" onClick={() => onSocialClick("google")}>
           Continue with Google
         </Button>
-        <Button name="github" onClick={onSocialClick}>
+        <Button name="github" onClick={() => onSocialClick("github")}>
           Continue with Github
         </Button>
         <span onClick={toggleAccount}>
