@@ -1,14 +1,19 @@
-import React, { useState } from "react";
-import { Form, Input, Button } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import {
+  GithubFilled,
+  GooglePlusSquareFilled,
+  LockOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
 import "antd/dist/antd.css";
-import "../index.css";
 import { authService, firebaseInstance } from "fbase";
+import React, { useState } from "react";
+import "../index.css";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [passWord, setPassWord] = useState("");
-  const [isNewAccount, setNewAccount] = useState(false);
+  const [isNewAccount, setNewAccount] = useState(true);
   const [error, setError] = useState("");
   const onChange = (event) => {
     const {
@@ -94,21 +99,30 @@ const Auth = () => {
           >
             {isNewAccount === false ? "Create new account" : "Log In"}
           </Button>
+          <a onClick={toggleAccount} className="sign-up-link">
+            {isNewAccount ? "Sign up here" : "Sign in here"}
+          </a>
         </Form.Item>
       </Form>
-
       <span className="text-error">{error}</span>
-      <span>Or login with</span>
+      <span>Or sign in with</span>
       <div className="login-social">
-        <Button name="google" onClick={() => onSocialClick("google")}>
-          Continue with Google
+        <Button
+          icon={<GooglePlusSquareFilled />}
+          name="google"
+          onClick={() => onSocialClick("google")}
+          type="primary"
+          danger
+        >
+          Google
         </Button>
-        <Button name="github" onClick={() => onSocialClick("github")}>
-          Continue with Github
+        <Button
+          icon={<GithubFilled />}
+          name="github"
+          onClick={() => onSocialClick("github")}
+        >
+          Github
         </Button>
-        <span onClick={toggleAccount}>
-          {isNewAccount ? "Sign In" : "Create new account"}
-        </span>
       </div>
     </div>
   );

@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import { authService } from "fbase";
-import { Redirect } from "react-router-dom";
+
 const Profile = () => {
-  <Redirect strict from="*" to="/" />;
-  // <Redirect from="*" to="/" />;
+  let history = useHistory();
+  const testRedirect = () => {
+    history.push("/");
+  };
+  const [error, setError] = useState("");
   const onLogOutClick = () => {
-    authService.signOut();
-    // history.push("/");
+    authService
+      .signOut()
+      .then(function () {
+        history.push("/");
+      })
+      .catch(function (error) {
+        setError(error);
+      });
   };
   return (
     <>
+      <button onClick={testRedirect}>Home</button>
       <button onClick={onLogOutClick}>Log Out</button>
+      {error}
     </>
   );
 };
