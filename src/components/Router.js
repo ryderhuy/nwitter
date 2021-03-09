@@ -1,4 +1,3 @@
-import Navigation from "components/Navigation";
 import React from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import EditProfile from "routes/EditProfile";
@@ -7,15 +6,10 @@ import UploadFile from "routes/UploadFile";
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
 import Menu from "../routes/Menu";
+import UploadFileStandard from "routes/UploadFileStandard";
 
 const AppRouter = ({ isLoggedIn }) => {
   console.log(isLoggedIn ? "login success" : "login false");
-  //let history = useHistory();
-  // const testClick = () => {
-  //   const xxx = withRouter("/");
-  //   history.push(xxx);
-  //   console.log(xxx);
-  // };
   return (
     <Router>
       {/* {isLoggedIn && <Navigation />} */}
@@ -23,6 +17,7 @@ const AppRouter = ({ isLoggedIn }) => {
       <Switch>
         {isLoggedIn === true ? (
           <>
+            <div className="banner"></div>
             <Menu />
 
             <Route exact path="/">
@@ -36,6 +31,9 @@ const AppRouter = ({ isLoggedIn }) => {
             </Route>
             <Route exact path="/uploadfile">
               <UploadFile isLoggedIn={isLoggedIn} />
+            </Route>
+            <Route exact path="/uploadfilestandard">
+              <UploadFileStandard />
             </Route>
             {/* <button onClick={testClick}>logout</button> */}
           </>

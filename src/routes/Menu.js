@@ -24,13 +24,14 @@ const Slider = () => {
   return (
     <Menu
       onClick={handleClick}
-      style={{ width: 256 }}
+      // style={{ width:  }}
       defaultSelectedKeys={["/"]}
       mode="inline"
     >
       <Menu.Item key="/">Home</Menu.Item>
       <Menu.Item key="/profile">Profile</Menu.Item>
-      <Menu.Item key="/uploadfile">Upload File</Menu.Item>
+      <Menu.Item key="/uploadfile">Upload File</Menu.Item>\
+      <Menu.Item key="/uploadfilestandard">Upload File Standard</Menu.Item>
       <Menu.Item key="/logout">
         <Button type="primary" block>
           Logout

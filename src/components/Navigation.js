@@ -16,6 +16,9 @@ const Navigation = () => (
         <li>
           <Link to="/uploadfile">Upload File</Link>
         </li>
+        <li>
+          <Link to="/uploadfilestandard">Upload File Standard</Link>
+        </li>
       </ul>
     </nav>
   </div>
