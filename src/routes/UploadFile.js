@@ -2,19 +2,20 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Space, Table, Upload, Select } from "antd";
 import { authService, database, firebaseInstance, storage } from "fbase";
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import { format } from "date-fns";
 
 const UploadFile = () => {
   const [fileUpload, setFileUpload] = useState(null);
   const [checkUpload, setCheckUpload] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
   const [refWP, setRefWP] = useState("WP/");
+  const [standardFileName, setStandardFileName] = useState("");
   const props = {
     beforeUpload: (file) => {
-      if (file.type !== "application/haansofthwp") {
+      if (!file.name.includes(".hwp")) {
         message.error(`${file.name} is not a hwp file`);
       }
-      return file.type === "application/haansofthwp"
+      // return file.type === "application/haansofthwp"
+      return file.name.includes(".hwp")
         ? true
         : Upload.LIST_IGNORE;
     },
@@ -23,95 +24,76 @@ const UploadFile = () => {
     },
   };
   const handleUpload = () => {
-    if (isAdmin) {
-      setRefWP("WP/StandardFile/");
-    } else {
+    if(standardFileName == ""){
+setCheckUpload("Please choose standard file!")
+    }else{
       setRefWP("WP/");
+      const uploadTask = storage.ref(refWP + fileUpload.name).put(fileUpload);
+      setCheckUpload("Uploading....");
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        (error) => {
+          console.log(error);
+          setCheckUpload(error.message);
+        },
+        () => {
+          storage
+            .ref(refWP)
+            .child(fileUpload.name)
+            .getDownloadURL()
+            .then((url) => {
+              setCheckUpload("Upload successfull!!!");
+              const newID = database.ref().push().key;
+                writeUserData(
+                  authService.currentUser.uid,
+                  newID,
+                  standardFileName,
+                  url,
+                  fileUpload.name,
+                  "<b>File is processing</b>",
+                  false
+                );
+            });
+        }
+      );
     }
-    const uploadTask = storage.ref(refWP + fileUpload.name).put(fileUpload);
-    setCheckUpload("Uploading....");
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {},
-      (error) => {
-        console.log(error);
-        setCheckUpload(error.message);
-      },
-      () => {
-        storage
-          .ref(refWP)
-          .child(fileUpload.name)
-          .getDownloadURL()
-          .then((url) => {
-            setCheckUpload("Upload successfull!!!");
-            const newID = database.ref().push().key;
-            writeUserData(
-              authService.currentUser.uid,
-              newID,
-              "dest",
-              "dest name",
-              url,
-              fileUpload.name,
-              "<b>File is processing</b>",
-              false
-            );
-          });
-      }
-    );
+     
   };
   const writeUserData = (
     UserID,
     ID,
-    FileDest,
     FileDestName,
     FileSrc,
     FileSrcName,
     HtmlResult,
     IsComplete
   ) => {
-    if (isAdmin) {
-      firebaseInstance
-        .database()
-        .ref("wpdb/Standard/" + ID)
-        .set({
-          FileSrc: FileSrc,
-          FileName: FileSrcName,
-          InsertDateTime: moment.defaultFormat("YYY-MM-DD hh:mm:ss"),
-          IsActive: true,
-        });
-    } else {
       firebaseInstance
         .database()
         .ref("wpdb/" + UserID + "/" + ID)
         .set({
-          FileDest: FileDest,
           FileDestName: FileDestName,
           FileSrc: FileSrc,
           FileSrcName: FileSrcName,
           HtmlResult: HtmlResult,
           IsComplete: IsComplete,
-          InsertDateTime: moment.defaultFormat("YYY-MM-DD hh:mm:ss"),
+          InsertDateTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
         });
-    }
   };
 
   const [listURL, setListUrl] = useState();
   const [htmlResult, setHtmlResult] = useState("");
-  const showHTML = () => {};
-  // useEffect(() => {
-  //   var starCountRef = database.ref("wpdb/");
-  //   starCountRef.on("value", (snapshot) => {
-  //     const data = snapshot.val();
-  //     setListUrl(Object.values(data[authService.currentUser.uid]));
-  //   });
-  // }, []);
   useEffect(() => {
     var starCountRef = database.ref("wpdb/");
     starCountRef.on("value", (snapshot) => {
       const data = snapshot.val();
+      console.log(data)
+      if( data[authService.currentUser.uid] != undefined)
       setListUrl(Object.values(data[authService.currentUser.uid]));
     });
   }, []);
+ 
   const createMarkup = (htmlResult) => {
     setHtmlResult(htmlResult.HtmlResult);
   };
@@ -147,14 +129,22 @@ const UploadFile = () => {
     },
   ];
   const { Option } = Select;
-  const children = [];
-  for (let i = 10; i < 36; i++) {
-    children.push(
-      <Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>
-    );
-  }
+  const listStandard = [];
+  var standardRef = database.ref("wpdb/standard");
+  standardRef.on("value", (snapshot) => {
+    const dataStandard = snapshot.val();
+    if(dataStandard != null){
+      const listFileStandard = Object.values(dataStandard);
+      for (let i = 0; i < listFileStandard.length; i++) {
+        listStandard.push(
+          <Option value={listFileStandard[i].FileName}>{listFileStandard[i].FileName}</Option>       
+        );
+      }
+    }
+    
+  });
   function onChange(value) {
-    console.log(`selected ${value}`);
+    setStandardFileName(value);
   }
   return (
     <>
@@ -165,17 +155,16 @@ const UploadFile = () => {
           </Upload>
           <Button onClick={handleUpload}>Upload</Button>
           <Select
-            className="select-file"
-            mode="tags"
+          showSearch
+            className="select-file"            
             placeholder="Choose standard file"
-            onChange={onChange}
+           onChange={onChange}
           >
-            {children}
+            {listStandard}            
           </Select>
-          ,<span>{checkUpload}</span>,
+       <span>{checkUpload}</span>,
         </div>
         <Table columns={columns} dataSource={listURL} />
-
         <div dangerouslySetInnerHTML={{ __html: htmlResult }} />
       </div>
     </>

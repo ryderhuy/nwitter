@@ -24,6 +24,7 @@ const Slider = () => {
   return (
     <Menu
       onClick={handleClick}
+      className="menu"
       // style={{ width:  }}
       defaultSelectedKeys={["/"]}
       mode="inline"

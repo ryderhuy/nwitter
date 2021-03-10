@@ -2,7 +2,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Space, Table, Upload } from "antd";
 import { authService, database, firebaseInstance, storage } from "fbase";
 import React, { useEffect, useState } from "react";
-import moment from "moment";
 import { format } from "date-fns";
 
 const UploadFileStandard = () => {
@@ -10,10 +9,12 @@ const UploadFileStandard = () => {
   const [checkUpload, setCheckUpload] = useState("");
   const props = {
     beforeUpload: (file) => {
-      if (file.type !== "application/haansofthwp") {
+      // if (file.type !== "application/haansofthwp" && !file.name.includes(".hwp")) {
+      if (!file.name.includes(".hwp")) {
         message.error(`${file.name} is not a hwp file`);
       }
-      return file.type === "application/haansofthwp"
+      // return file.type === "application/haansofthwp"
+      return file.name.includes(".hwp")
         ? true
         : Upload.LIST_IGNORE;
     },

@@ -27,6 +27,9 @@
 .login-form-button {
   width: 100%;
 }
+.menu{
+  max-width: 256px;
+}
 .text-error {
   color: red;
 }
