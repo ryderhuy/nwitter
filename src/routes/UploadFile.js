@@ -1,4 +1,4 @@
-import { UploadOutlined } from "@ant-design/icons";
+import { StarTwoTone, UploadOutlined } from "@ant-design/icons";
 import { Button, message, Space, Table, Upload, Select } from "antd";
 import { authService, database, firebaseInstance, storage } from "fbase";
 import React, { useEffect, useState } from "react";
@@ -85,12 +85,11 @@ setCheckUpload("Please choose standard file!")
   const [listURL, setListUrl] = useState();
   const [htmlResult, setHtmlResult] = useState("");
   useEffect(() => {
-    var starCountRef = database.ref("wpdb/");
+    var starCountRef = database.ref("wpdb/"+ authService.currentUser.uid);
     starCountRef.on("value", (snapshot) => {
       const data = snapshot.val();
-      console.log(data)
-      if( data[authService.currentUser.uid] != undefined)
-      setListUrl(Object.values(data[authService.currentUser.uid]));
+      if( data != null)
+      setListUrl(Object.values(data));
     });
   }, []);
  
