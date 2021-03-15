@@ -43,7 +43,6 @@ const UploadFileStandard = () => {
             setCheckUpload("Upload successfull!!!");
             const newID = database.ref().push().key;
             writeUserData(
-              authService.currentUser.uid,
               newID,
               url,
               fileUpload.name,
@@ -53,15 +52,14 @@ const UploadFileStandard = () => {
       }
     );
   };
-  const writeUserData = (UserID, ID, FileSrc, FileName, IsActive) => {
+  const writeUserData = (ID, FileSrc, FileName, IsActive) => {
     firebaseInstance
       .database()
       .ref("wpdb/standard/" + ID)
       .set({
-        UserID: UserID,
         FileSrc: FileSrc,
         FileName: FileName,
-        InsertDateTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
+        InsertTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
         IsActive: IsActive,
       });
   };
@@ -86,10 +84,10 @@ const UploadFileStandard = () => {
       render: (text, record) => <span>{record.FileName}</span>,
     },
     {
-      title: "InsertDateTime",
-      dataIndex: "InsertDateTime",
-      key: "InsertDateTime",
-      render: (text, record) => <span>{record.InsertDateTime}</span>,
+      title: "InsertTime",
+      dataIndex: "InsertTime",
+      key: "InsertTime",
+      render: (text, record) => <span>{record.InsertTime}</span>,
     },
     {
       title: "IsActive",

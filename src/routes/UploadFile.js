@@ -24,7 +24,7 @@ const UploadFile = () => {
     },
   };
   const handleUpload = () => {
-    if(standardFileName == ""){
+    if(standardFileName === ""){
 setCheckUpload("Please choose standard file!")
     }else{
       setRefWP("WP/");
@@ -52,7 +52,7 @@ setCheckUpload("Please choose standard file!")
                   url,
                   fileUpload.name,
                   "<b>File is processing</b>",
-                  false
+                  "Pending"
                 );
             });
         }
@@ -67,25 +67,25 @@ setCheckUpload("Please choose standard file!")
     FileSrc,
     FileSrcName,
     HtmlResult,
-    IsComplete
+    Status
   ) => {
       firebaseInstance
         .database()
-        .ref("wpdb/" + UserID + "/" + ID)
+        .ref("wpdb/ListPending/" + UserID + "/" + ID)
         .set({
           FileDestName: FileDestName,
           FileSrc: FileSrc,
           FileSrcName: FileSrcName,
           HtmlResult: HtmlResult,
-          IsComplete: IsComplete,
-          InsertDateTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
+          Status: Status,
+          InsertTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
         });
   };
 
   const [listURL, setListUrl] = useState();
   const [htmlResult, setHtmlResult] = useState("");
   useEffect(() => {
-    var starCountRef = database.ref("wpdb/"+ authService.currentUser.uid);
+    var starCountRef = database.ref("wpdb/ListPending/"+ authService.currentUser.uid);
     starCountRef.on("value", (snapshot) => {
       const data = snapshot.val();
       if( data != null)
@@ -128,20 +128,22 @@ setCheckUpload("Please choose standard file!")
     },
   ];
   const { Option } = Select;
-  const listStandard = [];
-  var standardRef = database.ref("wpdb/standard");
-  standardRef.on("value", (snapshot) => {
-    const dataStandard = snapshot.val();
-    if(dataStandard != null){
-      const listFileStandard = Object.values(dataStandard);
-      for (let i = 0; i < listFileStandard.length; i++) {
-        listStandard.push(
-          <Option value={listFileStandard[i].FileName}>{listFileStandard[i].FileName}</Option>       
-        );
-      }
-    }
-    
-  });
+
+    const listStandard = [];
+      var standardRef = database.ref("wpdb/standard");
+      standardRef.on("value", (snapshot) => {
+        const dataStandard = snapshot.val();
+        if(dataStandard != null){
+          const listFileStandard = Object.values(dataStandard);
+          for (let i = 0; i < listFileStandard.length; i++) {
+          
+            listStandard.push(
+              <Option value={listFileStandard[i].FileName}>{listFileStandard[i].FileName}</Option> 
+             
+            );    
+          }
+        }    
+      });
   function onChange(value) {
     setStandardFileName(value);
   }
@@ -161,7 +163,7 @@ setCheckUpload("Please choose standard file!")
           >
             {listStandard}            
           </Select>
-       <span>{checkUpload}</span>,
+       <span>{checkUpload}</span>
         </div>
         <Table columns={columns} dataSource={listURL} />
         <div dangerouslySetInnerHTML={{ __html: htmlResult }} />
