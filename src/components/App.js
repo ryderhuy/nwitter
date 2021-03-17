@@ -18,9 +18,9 @@ function App() {
   return (
     <>
       {init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initializing...."}
-      <footer className="text-center">
+      {/* <footer className="text-center">
         &copy; {new Date().getFullYear()} Nwitter
-      </footer>
+      </footer> */}
     </>
   );
 }

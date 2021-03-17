@@ -1,8 +1,7 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Space, Table, Upload } from "antd";
-import { authService, database, firebaseInstance, storage } from "fbase";
+import { database, firebaseInstance, storage } from "fbase";
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 
 const UploadFileStandard = () => {
   const [fileUpload, setFileUpload] = useState(null);
@@ -14,9 +13,7 @@ const UploadFileStandard = () => {
         message.error(`${file.name} is not a hwp file`);
       }
       // return file.type === "application/haansofthwp"
-      return file.name.includes(".hwp")
-        ? true
-        : Upload.LIST_IGNORE;
+      return file.name.includes(".hwp") ? true : Upload.LIST_IGNORE;
     },
     onChange: (info) => {
       setFileUpload(info.fileList[0]["originFileObj"]);
@@ -42,12 +39,7 @@ const UploadFileStandard = () => {
           .then((url) => {
             setCheckUpload("Upload successfull!!!");
             const newID = database.ref().push().key;
-            writeUserData(
-              newID,
-              url,
-              fileUpload.name,
-              true
-            );
+            writeUserData(newID, url, fileUpload.name, true);
           });
       }
     );
@@ -59,13 +51,9 @@ const UploadFileStandard = () => {
       .set({
         FileSrc: FileSrc,
         FileName: FileName,
-        InsertTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
+        InsertTime: new Date().toString(),
         IsActive: IsActive,
       });
-  };
-  const getUserName = (uid) => {
-    const user = authService.getUser(uid);
-    return user;
   };
   const [listURL, setListUrl] = useState();
   useEffect(() => {

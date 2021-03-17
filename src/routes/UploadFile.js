@@ -1,8 +1,7 @@
-import { StarTwoTone, UploadOutlined } from "@ant-design/icons";
-import { Button, message, Space, Table, Upload, Select } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { Button, message, Select, Space, Table, Upload } from "antd";
 import { authService, database, firebaseInstance, storage } from "fbase";
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 
 const UploadFile = () => {
   const [fileUpload, setFileUpload] = useState(null);
@@ -15,18 +14,16 @@ const UploadFile = () => {
         message.error(`${file.name} is not a hwp file`);
       }
       // return file.type === "application/haansofthwp"
-      return file.name.includes(".hwp")
-        ? true
-        : Upload.LIST_IGNORE;
+      return file.name.includes(".hwp") ? true : Upload.LIST_IGNORE;
     },
     onChange: (info) => {
       setFileUpload(info.fileList[0]["originFileObj"]);
     },
   };
   const handleUpload = () => {
-    if(standardFileName === ""){
-setCheckUpload("Please choose standard file!")
-    }else{
+    if (standardFileName === "") {
+      setCheckUpload("Please choose standard file!");
+    } else {
       setRefWP("WP/");
       const uploadTask = storage.ref(refWP + fileUpload.name).put(fileUpload);
       setCheckUpload("Uploading....");
@@ -45,20 +42,19 @@ setCheckUpload("Please choose standard file!")
             .then((url) => {
               setCheckUpload("Upload successfull!!!");
               const newID = database.ref().push().key;
-                writeUserData(
-                  authService.currentUser.uid,
-                  newID,
-                  standardFileName,
-                  url,
-                  fileUpload.name,
-                  "<b>File is processing</b>",
-                  "Pending"
-                );
+              writeUserData(
+                authService.currentUser.uid,
+                newID,
+                standardFileName,
+                url,
+                fileUpload.name,
+                "<b>File is processing</b>",
+                "Pending"
+              );
             });
         }
       );
     }
-     
   };
   const writeUserData = (
     UserID,
@@ -69,30 +65,31 @@ setCheckUpload("Please choose standard file!")
     HtmlResult,
     Status
   ) => {
-      firebaseInstance
-        .database()
-        .ref("wpdb/ListPending/" + UserID + "/" + ID)
-        .set({
-          FileDestName: FileDestName,
-          FileSrc: FileSrc,
-          FileSrcName: FileSrcName,
-          HtmlResult: HtmlResult,
-          Status: Status,
-          InsertTime: format(new Date(), "yyyy/MM/dd kk:mm:ss"),
-        });
+    firebaseInstance
+      .database()
+      .ref("wpdb/ListPending/" + UserID + "/" + ID)
+      .set({
+        FileDestName: FileDestName,
+        FileSrc: FileSrc,
+        FileSrcName: FileSrcName,
+        HtmlResult: HtmlResult,
+        Status: Status,
+        InsertTime: new Date().toString(),
+      });
   };
 
   const [listURL, setListUrl] = useState();
   const [htmlResult, setHtmlResult] = useState("");
   useEffect(() => {
-    var starCountRef = database.ref("wpdb/ListPending/"+ authService.currentUser.uid);
+    var starCountRef = database.ref(
+      "wpdb/ListPending/" + authService.currentUser.uid
+    );
     starCountRef.on("value", (snapshot) => {
       const data = snapshot.val();
-      if( data != null)
-      setListUrl(Object.values(data));
+      if (data != null) setListUrl(Object.values(data));
     });
   }, []);
- 
+
   const createMarkup = (htmlResult) => {
     setHtmlResult(htmlResult.HtmlResult);
   };
@@ -108,6 +105,12 @@ setCheckUpload("Please choose standard file!")
       dataIndex: "FileDestName",
       key: "FileDestName",
       render: (text, record) => <span>{record.FileDestName}</span>,
+    },
+    {
+      title: "InsertTime",
+      dataIndex: "InsertTime",
+      key: "InsertTime",
+      render: (text, record) => <span>{record.InsertTime}</span>,
     },
     {
       title: "IsComplete",
@@ -129,21 +132,21 @@ setCheckUpload("Please choose standard file!")
   ];
   const { Option } = Select;
 
-    const listStandard = [];
-      var standardRef = database.ref("wpdb/standard");
-      standardRef.on("value", (snapshot) => {
-        const dataStandard = snapshot.val();
-        if(dataStandard != null){
-          const listFileStandard = Object.values(dataStandard);
-          for (let i = 0; i < listFileStandard.length; i++) {
-          
-            listStandard.push(
-              <Option value={listFileStandard[i].FileName}>{listFileStandard[i].FileName}</Option> 
-             
-            );    
-          }
-        }    
-      });
+  const listStandard = [];
+  var standardRef = database.ref("wpdb/standard");
+  standardRef.on("value", (snapshot) => {
+    const dataStandard = snapshot.val();
+    if (dataStandard != null) {
+      const listFileStandard = Object.values(dataStandard);
+      for (let i = 0; i < listFileStandard.length; i++) {
+        listStandard.push(
+          <Option value={listFileStandard[i].FileName}>
+            {listFileStandard[i].FileName}
+          </Option>
+        );
+      }
+    }
+  });
   function onChange(value) {
     setStandardFileName(value);
   }
@@ -156,14 +159,14 @@ setCheckUpload("Please choose standard file!")
           </Upload>
           <Button onClick={handleUpload}>Upload</Button>
           <Select
-          showSearch
-            className="select-file"            
+            showSearch
+            className="select-file"
             placeholder="Choose standard file"
-           onChange={onChange}
+            onChange={onChange}
           >
-            {listStandard}            
+            {listStandard}
           </Select>
-       <span>{checkUpload}</span>
+          <span>{checkUpload}</span>
         </div>
         <Table columns={columns} dataSource={listURL} />
         <div dangerouslySetInnerHTML={{ __html: htmlResult }} />
