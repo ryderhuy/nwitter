@@ -169,7 +169,10 @@ const UploadFile = () => {
           <span>{checkUpload}</span>
         </div>
         <Table columns={columns} dataSource={listURL} />
-        <div dangerouslySetInnerHTML={{ __html: htmlResult }} />
+        <div
+          className="html-result"
+          dangerouslySetInnerHTML={{ __html: htmlResult }}
+        />
       </div>
     </>
   );
