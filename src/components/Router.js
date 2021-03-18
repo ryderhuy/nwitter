@@ -21,7 +21,7 @@ const AppRouter = ({ isLoggedIn }) => {
             <Menu />
 
             <Route exact path="/">
-              <Home />
+            <UploadFile isLoggedIn={isLoggedIn} />
             </Route>
             <Route exact path="/profile">
               <Profile />

@@ -57,10 +57,10 @@ const UploadFileStandard = () => {
   };
   const [listURL, setListUrl] = useState();
   useEffect(() => {
-    var starCountRef = database.ref("wpdb");
+    var starCountRef = database.ref("wpdb/standard");
     starCountRef.on("value", (snapshot) => {
       const data = snapshot.val();
-      if (data != null) setListUrl(Object.values(data["standard"]));
+      if (data != null) setListUrl(Object.values(data));
     });
   }, []);
 
